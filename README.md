@@ -1,18 +1,18 @@
 # Crime Analysis using Hadoop MapReduce
 
-A Big Data analysis project that processes multiple crime datasets using **Hadoop HDFS and Hadoop MapReduce** and presents the processed results through an interactive **Streamlit and Plotly dashboard**.
+A Big Data analysis project that processes crime datasets using **Hadoop HDFS and Hadoop MapReduce** and presents the processed results through an interactive **Streamlit and Plotly dashboard**.
 
-The project focuses on analyzing different categories of crime in India across states and years. Five crime datasets are processed independently using MapReduce programs, and the resulting aggregated data is used for visualization and interactive analysis.
+The project analyzes five crime-related datasets covering different categories such as IPC crimes, auto theft, property theft, murder victims, and crimes against women. Each dataset is processed using a separate Mapper and Reducer, and the resulting aggregated data is used for visualization and interactive analysis.
 
 ---
 
 ## 1. Project Overview
 
-Crime datasets contain information across multiple states, years, crime categories, and demographic groups. Processing such datasets manually becomes difficult as the amount of data increases.
+Crime datasets contain information across different states, districts, years, crime categories, and demographic groups. Processing and analyzing such data provides an opportunity to demonstrate how Big Data technologies can be used for storage, processing, and analysis.
 
-This project demonstrates how a Big Data processing pipeline can be built using Hadoop.
+This project implements a complete Big Data processing workflow using Hadoop.
 
-The main workflow is:
+The overall workflow is:
 
 ```text
 Crime CSV Datasets
@@ -22,50 +22,61 @@ Crime CSV Datasets
         |
         v
  Hadoop MapReduce
-   /    |    \
-  /     |     \
-IPC   Property  Auto Theft
-       Murder
-       Women
         |
         v
-Aggregated CSV Results
+Aggregated Results
         |
         v
-Python Visualization
+Processed CSV Files
         |
-        v
-Interactive Streamlit Dashboard
+        +----------------------+
+        |                      |
+        v                      v
+Static Visualizations    Interactive Dashboard
+   Matplotlib            Streamlit + Plotly
+```
 
-The project uses Hadoop for distributed storage and MapReduce for data aggregation. Python is used after the MapReduce stage to prepare the results for visualization.
-2. Objectives
+The Hadoop part of the project is responsible for storing and processing the datasets. Python is then used to work with the processed MapReduce results and present them through visualizations and an interactive dashboard.
+
+---
+
+## 2. Objectives
+
 The main objectives of this project are:
+
 - Store crime datasets using Hadoop HDFS.
 - Understand the structure of different crime datasets.
-- Process large CSV files using Hadoop MapReduce.
+- Process the datasets using Hadoop MapReduce.
 - Implement separate Mapper and Reducer programs for different datasets.
 - Aggregate crime statistics by state and year.
 - Calculate useful crime-related metrics.
 - Generate visualizations from the processed data.
-- Build an interactive dashboard for filtering and exploring the results.
-- Understand an end-to-end Big Data processing workflow.
-3. Technologies Used
-Technology	Purpose
-Hadoop 3.5.0	Big Data processing framework
-HDFS	Distributed storage of crime datasets
-Hadoop MapReduce	Distributed data processing and aggregation
-Python 3	Mapper, Reducer and visualization programs
-Pandas	Processing MapReduce output
-Matplotlib	Static visualizations
-Plotly	Interactive charts
-Streamlit	Interactive dashboard
-Git	Version control
-GitHub	Source code repository
-WSL2 / Ubuntu	Hadoop execution environment
+- Build an interactive dashboard for exploring the results.
+- Demonstrate an end-to-end Big Data processing workflow.
 
+---
 
-Development Environment
+## 3. Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Hadoop 3.5.0 | Big Data processing framework |
+| HDFS | Storage of crime datasets |
+| Hadoop MapReduce | Data processing and aggregation |
+| Hadoop Streaming | Running Python Mapper and Reducer programs |
+| Python 3 | Mapper, Reducer and analysis programs |
+| Pandas | Processing MapReduce output |
+| Matplotlib | Static visualizations |
+| Plotly | Interactive charts |
+| Streamlit | Interactive dashboard |
+| Git | Version control |
+| GitHub | Source code repository |
+| WSL2 / Ubuntu | Local Hadoop execution environment |
+
+### Development Environment
+
 The project was developed and tested using:
+
 - Windows 11
 - WSL2
 - Ubuntu 24.04 LTS
@@ -73,15 +84,31 @@ The project was developed and tested using:
 - Hadoop 3.5.0
 - Python 3
 - Hadoop Streaming
-4. Datasets
-Five crime datasets are used in the project.
-The datasets cover different aspects of crime in India and contain information for multiple years and states.
-4.1 IPC Crime Dataset
-File:
+
+The Hadoop environment is configured in **pseudo-distributed mode**, allowing HDFS and MapReduce/YARN components to run on a single machine.
+
+---
+
+# 4. Datasets
+
+Five crime datasets are used in this project.
+
+The datasets cover different aspects of crime in India and contain information across multiple years and states.
+
+---
+
+## 4.1 IPC Crime Dataset
+
+**File:**
+
+```text
 01_District_wise_crimes_committed_IPC_2001_2012.csv
+```
 
 This dataset contains district-wise crime statistics under the Indian Penal Code.
+
 Important fields include:
+
 - State/UT
 - District
 - Year
@@ -100,17 +127,37 @@ Important fields include:
 - Dowry Deaths
 - Other IPC Crimes
 - Total IPC Crimes
-Processing performed
-The MapReduce job extracts:
-State + Year -> Total IPC Crimes
 
-District-level records are aggregated to obtain the total IPC crime count for each state and year.
-4.2 Crimes Against Women Dataset
-File:
+### Processing
+
+The MapReduce job aggregates the district-level records using:
+
+```text
+State + Year
+```
+
+The main output is:
+
+```text
+State + Year -> Total IPC Crimes
+```
+
+This provides the total IPC crime count for each state and year.
+
+---
+
+## 4.2 Crimes Against Women Dataset
+
+**File:**
+
+```text
 42_Cases_under_crime_against_women.csv
+```
 
 This dataset contains information about cases related to crimes against women.
+
 Important fields include:
+
 - Area/State
 - Year
 - Cases Reported
@@ -121,21 +168,36 @@ Important fields include:
 - Cases Sent for Trial
 - Cases Trials Completed
 - Other case-status fields
-Processing performed
-The MapReduce job aggregates selected case statistics by:
+
+### Processing
+
+The MapReduce job aggregates selected case statistics using:
+
+```text
 State + Year
+```
 
 The main values extracted are:
+
 - Reported cases
 - Chargesheeted cases
 - Convicted cases
 - Pending trial cases
-4.3 Auto Theft Dataset
-File:
+
+---
+
+## 4.3 Auto Theft Dataset
+
+**File:**
+
+```text
 30_Auto_theft.csv
+```
 
 This dataset contains statistics related to vehicle theft.
+
 Important fields include:
+
 - Area/State
 - Year
 - Group Name
@@ -143,18 +205,32 @@ Important fields include:
 - Auto Theft Recovered
 - Auto Theft Stolen
 - Auto Theft Coordinated/Traced
-Processing performed
+
+### Processing
+
 The MapReduce job calculates:
+
+```text
 State + Year -> Total Stolen
 State + Year -> Total Recovered
+```
 
-This allows the dashboard to compare stolen and recovered vehicles across states and years.
-4.4 Property Stolen and Recovered Dataset
-File:
+This allows stolen and recovered vehicles to be compared across states and years.
+
+---
+
+## 4.4 Property Stolen and Recovered Dataset
+
+**File:**
+
+```text
 10_Property_stolen_and_recovered.csv
+```
 
 This dataset contains information about property reported stolen and subsequently recovered.
+
 Important fields include:
+
 - Area/State
 - Year
 - Group Name
@@ -163,22 +239,37 @@ Important fields include:
 - Cases Property Recovered
 - Value of Property Stolen
 - Value of Property Recovered
-Processing performed
+
+### Processing
+
 The MapReduce job calculates:
+
 - Total cases of property stolen
 - Total cases of property recovered
 - Total value of property stolen
 - Total value of property recovered
-A recovery rate is also calculated:
+
+A recovery rate is calculated from the aggregated values:
+
+```text
 Recovery Rate =
 (Value of Property Recovered / Value of Property Stolen) × 100
+```
 
-4.5 Murder Victim Age and Sex Dataset
-File:
+---
+
+## 4.5 Murder Victim Age and Sex Dataset
+
+**File:**
+
+```text
 32_Murder_victim_age_sex.csv
+```
 
 This dataset contains demographic information about murder victims.
+
 Important fields include:
+
 - Area/State
 - Year
 - Group Name
@@ -189,47 +280,89 @@ Important fields include:
 - Victims Up to 15-18 Years
 - Victims Up to 18-30 Years
 - Victims Up to 30-50 Years
+
 The dataset also contains group information that allows male and female victim counts to be extracted.
-Processing performed
+
+### Processing
+
 The MapReduce job aggregates:
+
+```text
 State + Year -> Male Victims
 State + Year -> Female Victims
 State + Year -> Total Victims
+```
 
-5. Why MapReduce?
-The project uses Hadoop MapReduce instead of performing the aggregation directly with Pandas.
-The purpose is to demonstrate the Big Data processing concept of:
-Input Data
-    |
-    v
-Mapper
-    |
-    v
+---
+
+# 5. Why Hadoop MapReduce?
+
+The main processing requirement of the project is to demonstrate Big Data processing using Hadoop.
+
+Instead of directly aggregating the raw CSV files using Pandas, the project uses **Hadoop MapReduce** to perform the main aggregation stage.
+
+The MapReduce workflow is:
+
+```text
+Input Dataset
+      |
+      v
+   Mapper
+      |
+      v
 Intermediate Key-Value Pairs
-    |
-    v
+      |
+      v
 Shuffle and Sort
-    |
-    v
-Reducer
-    |
-    v
+      |
+      v
+   Reducer
+      |
+      v
 Aggregated Output
+```
 
-For example, consider the IPC dataset.
-The Mapper converts records into:
-Telangana,2010    45000
-Telangana,2010    32000
-Telangana,2010    18000
+For example, consider the following records:
 
-During the MapReduce shuffle phase, values having the same key are grouped:
-Telangana,2010 -> [45000, 32000, 18000]
+```text
+State       Year       Value
+--------------------------------
+Telangana   2010       100
+Telangana   2010       250
+Telangana   2010       150
+Andhra      2010       200
+```
 
-The Reducer then calculates:
-Telangana,2010 -> 95000
+The Mapper generates key-value pairs:
 
-The same approach is applied to the other datasets with different aggregation logic.
-6. Project Architecture
+```text
+Telangana,2010    100
+Telangana,2010    250
+Telangana,2010    150
+Andhra,2010       200
+```
+
+During the shuffle and sort phase, Hadoop groups values having the same key:
+
+```text
+Andhra,2010      -> [200]
+Telangana,2010   -> [100, 250, 150]
+```
+
+The Reducer then calculates the aggregated values:
+
+```text
+Andhra,2010      -> 200
+Telangana,2010   -> 500
+```
+
+The same MapReduce concept is used for all five datasets, with the Mapper and Reducer logic adapted to the structure of each dataset.
+
+---
+
+# 6. Project Architecture
+
+```text
                     +----------------------+
                     |     Crime CSV Files  |
                     +----------+-----------+
@@ -237,7 +370,7 @@ The same approach is applied to the other datasets with different aggregation lo
                                v
                     +----------------------+
                     |      Hadoop HDFS     |
-                    |       Input Data     |
+                    |      Input Data      |
                     +----------+-----------+
                                |
                                v
@@ -265,10 +398,14 @@ The same approach is applied to the other datasets with different aggregation lo
                  |                           |
                  v                           v
         Static Visualizations       Interactive Dashboard
-          Matplotlib                    Streamlit
-                                         Plotly
+            Matplotlib              Streamlit + Plotly
+```
 
-7. Project Structure
+---
+
+# 7. Project Structure
+
+```text
 Crime-Analysis-BDA-CBP/
 │
 ├── data/
@@ -307,122 +444,267 @@ Crime-Analysis-BDA-CBP/
 ├── .streamlit/
 │   └── config.toml
 │
-└── .gitignore
+├── .gitignore
+└── README.md
+```
 
-8. Hadoop Setup
-8.1 Install Java
+---
+
+# 8. Hadoop Setup
+
+## 8.1 Java
+
 The project uses Java 17.
-Check the installed version:
+
+Check the installed Java version:
+
+```bash
 java -version
+```
 
-Also verify the Java compiler:
+Check the Java compiler:
+
+```bash
 javac -version
+```
 
-8.2 Hadoop Installation
+The Java installation used in the project is:
+
+```text
+/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+---
+
+## 8.2 Hadoop Installation
+
 Hadoop 3.5.0 is installed under:
-~/hadoop-3.5.0
 
-Set the required environment variables:
+```text
+~/hadoop-3.5.0
+```
+
+The following environment variables are used:
+
+```bash
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export HADOOP_HOME=$HOME/hadoop-3.5.0
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+```
 
-These variables can be added to ~/.bashrc so that they are available whenever a new terminal is opened.
-After editing .bashrc:
+These variables can be added to `~/.bashrc` so that they are available in new terminal sessions.
+
+After modifying `.bashrc`:
+
+```bash
 source ~/.bashrc
+```
 
 Check Hadoop:
+
+```bash
 hadoop version
+```
 
-9. Hadoop Configuration
-The project uses Hadoop in pseudo-distributed mode.
+---
+
+# 9. Hadoop Configuration
+
+The project uses Hadoop in **pseudo-distributed mode**.
+
 The main Hadoop configuration files are located at:
-~/hadoop-3.5.0/etc/hadoop/
 
-The following files were configured:
+```text
+~/hadoop-3.5.0/etc/hadoop/
+```
+
+The following configuration files were used:
+
+```text
 core-site.xml
 hdfs-site.xml
 mapred-site.xml
 yarn-site.xml
+```
 
-9.1 HDFS Configuration
+## 9.1 HDFS Configuration
+
 The default filesystem is configured as:
+
+```text
 hdfs://localhost:9000
+```
 
-HDFS replication is set to:
+HDFS replication is configured as:
+
+```text
 1
+```
 
-because this is a local academic project running on a single machine.
-The local NameNode and DataNode storage directories are:
+Since the project runs on a single local machine, one replica is sufficient for this academic implementation.
+
+The local NameNode and DataNode directories are:
+
+```text
 /home/greeshma/hadoop_data/namenode
 /home/greeshma/hadoop_data/datanode
+```
 
-10. Starting Hadoop
+---
+
+# 10. Starting Hadoop
+
 Start HDFS:
+
+```bash
 start-dfs.sh
+```
 
 Start YARN:
+
+```bash
 start-yarn.sh
+```
 
-Check running Hadoop processes:
+Check the running Hadoop processes:
+
+```bash
 jps
+```
 
-The following processes should normally be visible:
+The expected processes include:
+
+```text
 NameNode
 DataNode
 SecondaryNameNode
 ResourceManager
 NodeManager
+```
 
-11. Creating the HDFS Project Directories
-Create the project input directory:
+---
+
+# 11. Creating the HDFS Project Directories
+
+Create the HDFS input directory:
+
+```bash
 hdfs dfs -mkdir -p /user/greeshma/crime_project/input
+```
 
-Create an output directory:
+Create the HDFS output directory:
+
+```bash
 hdfs dfs -mkdir -p /user/greeshma/crime_project/output
+```
 
 Check the directories:
+
+```bash
 hdfs dfs -ls /user/greeshma/crime_project
+```
 
-12. Uploading the Datasets to HDFS
-The datasets are stored locally inside:
+---
+
+# 12. Uploading the Datasets to HDFS
+
+The local datasets are stored in:
+
+```text
 ~/crime_project/data
+```
 
-Upload them to HDFS:
+Upload the IPC dataset:
+
+```bash
 hdfs dfs -put data/01_District_wise_crimes_committed_IPC_2001_2012.csv \
 /user/greeshma/crime_project/input/
+```
 
+Upload the crimes against women dataset:
+
+```bash
 hdfs dfs -put data/42_Cases_under_crime_against_women.csv \
 /user/greeshma/crime_project/input/
+```
 
+Upload the auto theft dataset:
+
+```bash
 hdfs dfs -put data/30_Auto_theft.csv \
 /user/greeshma/crime_project/input/
+```
 
+Upload the property dataset:
+
+```bash
 hdfs dfs -put data/10_Property_stolen_and_recovered.csv \
 /user/greeshma/crime_project/input/
+```
 
+Upload the murder dataset:
+
+```bash
 hdfs dfs -put data/32_Murder_victim_age_sex.csv \
 /user/greeshma/crime_project/input/
+```
 
 Verify the uploaded files:
+
+```bash
 hdfs dfs -ls /user/greeshma/crime_project/input
+```
 
-13. Hadoop Streaming
-The MapReduce programs in this project are written in Python.
-Hadoop Streaming is used to allow Python scripts to work as Mapper and Reducer programs.
-The Hadoop Streaming JAR used in the project is:
+---
+
+# 13. Hadoop Streaming
+
+The Mapper and Reducer programs in this project are written in Python.
+
+**Hadoop Streaming** is used to execute these Python programs as Hadoop Mapper and Reducer tasks.
+
+The Hadoop Streaming JAR used is:
+
+```text
 $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar
+```
 
-14. Running the IPC MapReduce Job
+The basic MapReduce execution pattern is:
+
+```text
+Python Mapper
+      |
+      v
+Hadoop Shuffle and Sort
+      |
+      v
+Python Reducer
+      |
+      v
+HDFS Output
+```
+
+---
+
+# 14. Running the IPC MapReduce Job
+
 Make the scripts executable:
+
+```bash
 chmod 755 mapper/ipc_mapper.py
 chmod 755 reducer/ipc_reducer.py
+```
 
-Remove an old output directory if it already exists:
+If an output directory from a previous run exists, remove it:
+
+```bash
 hdfs dfs -rm -r /user/greeshma/crime_project/output/ipc_state_year
+```
 
 Run the MapReduce job:
+
+```bash
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -input /user/greeshma/crime_project/input/01_District_wise_crimes_committed_IPC_2001_2012.csv \
 -output /user/greeshma/crime_project/output/ipc_state_year \
@@ -430,16 +712,28 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -reducer "python3 reducer/ipc_reducer.py" \
 -file mapper/ipc_mapper.py \
 -file reducer/ipc_reducer.py
+```
 
-View the result:
+View the output:
+
+```bash
 hdfs dfs -cat /user/greeshma/crime_project/output/ipc_state_year/part-00000
+```
 
-15. Running the Property Theft MapReduce Job
+---
+
+# 15. Running the Property Theft MapReduce Job
+
 Make the scripts executable:
+
+```bash
 chmod 755 mapper/property_mapper.py
 chmod 755 reducer/property_reducer.py
+```
 
-Run:
+Run the MapReduce job:
+
+```bash
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -input /user/greeshma/crime_project/input/10_Property_stolen_and_recovered.csv \
 -output /user/greeshma/crime_project/output/property_analysis \
@@ -447,16 +741,28 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -reducer "python3 reducer/property_reducer.py" \
 -file mapper/property_mapper.py \
 -file reducer/property_reducer.py
+```
 
-View the result:
+View the output:
+
+```bash
 hdfs dfs -cat /user/greeshma/crime_project/output/property_analysis/part-00000
+```
 
-16. Running the Auto Theft MapReduce Job
+---
+
+# 16. Running the Auto Theft MapReduce Job
+
 Make the scripts executable:
+
+```bash
 chmod 755 mapper/auto_mapper.py
 chmod 755 reducer/auto_reducer.py
+```
 
-Run:
+Run the MapReduce job:
+
+```bash
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -input /user/greeshma/crime_project/input/30_Auto_theft.csv \
 -output /user/greeshma/crime_project/output/auto_theft_analysis \
@@ -464,16 +770,28 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -reducer "python3 reducer/auto_reducer.py" \
 -file mapper/auto_mapper.py \
 -file reducer/auto_reducer.py
+```
 
-View the result:
+View the output:
+
+```bash
 hdfs dfs -cat /user/greeshma/crime_project/output/auto_theft_analysis/part-00000
+```
 
-17. Running the Murder MapReduce Job
+---
+
+# 17. Running the Murder MapReduce Job
+
 Make the scripts executable:
+
+```bash
 chmod 755 mapper/murder_mapper.py
 chmod 755 reducer/murder_reducer.py
+```
 
-Run:
+Run the MapReduce job:
+
+```bash
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -input /user/greeshma/crime_project/input/32_Murder_victim_age_sex.csv \
 -output /user/greeshma/crime_project/output/murder_analysis \
@@ -481,16 +799,28 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -reducer "python3 reducer/murder_reducer.py" \
 -file mapper/murder_mapper.py \
 -file reducer/murder_reducer.py
+```
 
-View the result:
+View the output:
+
+```bash
 hdfs dfs -cat /user/greeshma/crime_project/output/murder_analysis/part-00000
+```
 
-18. Running the Crimes Against Women MapReduce Job
+---
+
+# 18. Running the Crimes Against Women MapReduce Job
+
 Make the scripts executable:
+
+```bash
 chmod 755 mapper/women_mapper.py
 chmod 755 reducer/women_reducer.py
+```
 
-Run:
+Run the MapReduce job:
+
+```bash
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -input /user/greeshma/crime_project/input/42_Cases_under_crime_against_women.csv \
 -output /user/greeshma/crime_project/output/women_analysis \
@@ -498,77 +828,147 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
 -reducer "python3 reducer/women_reducer.py" \
 -file mapper/women_mapper.py \
 -file reducer/women_reducer.py
+```
 
-View the result:
+View the output:
+
+```bash
 hdfs dfs -cat /user/greeshma/crime_project/output/women_analysis/part-00000
+```
 
-19. Retrieving MapReduce Results
-MapReduce output is stored in HDFS.
+---
+
+# 19. Retrieving MapReduce Results
+
+The MapReduce results are stored in HDFS.
+
 For example:
+
+```text
 /user/greeshma/crime_project/output/ipc_state_year/
+```
 
 The result can be copied back to the local project:
+
+```bash
 hdfs dfs -get \
 /user/greeshma/crime_project/output/ipc_state_year/part-00000 \
 output/ipc_state_year.csv
+```
 
-Similarly:
+Property analysis:
+
+```bash
 hdfs dfs -get \
 /user/greeshma/crime_project/output/property_analysis/part-00000 \
 output/property_analysis.csv
+```
 
+Auto theft analysis:
+
+```bash
 hdfs dfs -get \
 /user/greeshma/crime_project/output/auto_theft_analysis/part-00000 \
 output/auto_theft_analysis.csv
+```
 
+Murder analysis:
+
+```bash
 hdfs dfs -get \
 /user/greeshma/crime_project/output/murder_analysis/part-00000 \
 output/murder_analysis.csv
+```
 
+Crimes against women analysis:
+
+```bash
 hdfs dfs -get \
 /user/greeshma/crime_project/output/women_analysis/part-00000 \
 output/women_analysis.csv
+```
 
-These CSV files are then used by the visualization and dashboard scripts.
-20. Python Environment
+These processed CSV files are then used by the visualization and dashboard components.
+
+---
+
+# 20. Python Environment
+
 A Python virtual environment is used for the visualization and dashboard components.
-Create the environment:
+
+Create the virtual environment:
+
+```bash
 python3 -m venv .venv
+```
 
 Activate it:
+
+```bash
 source .venv/bin/activate
+```
 
 Install the required packages:
+
+```bash
 pip install pandas matplotlib streamlit plotly
+```
 
-The virtual environment is excluded from Git using .gitignore.
-21. Generating Static Visualizations
-The script:
+The virtual environment is excluded from Git using `.gitignore`.
+
+---
+
+# 21. Generating Static Visualizations
+
+The visualization script is:
+
+```text
 scripts/visualize.py
+```
 
-reads the MapReduce output CSV files and generates graphs.
+The script reads the processed MapReduce output CSV files and generates static graphs.
+
 Run:
-python3 scripts/visualize.py
 
-The generated graphs are stored inside:
+```bash
+python3 scripts/visualize.py
+```
+
+The generated graphs are stored in:
+
+```text
 output/graphs/
+```
 
 The project generates visualizations for:
+
 - IPC crimes by year
 - Auto theft
 - Crimes against women
 - Murder victim gender
 - Property recovery rate
-22. Interactive Dashboard
-The project also contains an interactive dashboard built using:
+
+---
+
+# 22. Interactive Dashboard
+
+The project also includes an interactive dashboard built using:
+
 - Streamlit
 - Plotly
 - Pandas
+
 The dashboard reads the processed MapReduce output files from:
+
+```text
 output/
+```
 
 It does not directly process the original raw datasets.
-The processing flow is:
+
+The dashboard workflow is:
+
+```text
 Raw Dataset
      |
      v
@@ -582,254 +982,445 @@ Processed CSV
      |
      v
 Streamlit Dashboard
+```
 
-23. Running the Dashboard
+This separation keeps the Hadoop processing stage independent from the visualization stage.
+
+---
+
+# 23. Running the Dashboard
+
 Activate the Python virtual environment:
-source .venv/bin/activate
 
-Run the Streamlit application:
+```bash
+source .venv/bin/activate
+```
+
+Run the dashboard:
+
+```bash
 streamlit run scripts/dashboard.py
+```
 
 Streamlit will start a local web server.
-Open the displayed local URL in a browser, normally:
-http://localhost:8501
 
-24. Dashboard Features
+Open the URL displayed in the terminal. It will normally be:
+
+```text
+http://localhost:8501
+```
+
+---
+
+# 24. Dashboard Features
+
 The dashboard provides interactive analysis of the processed crime data.
-A global filter section is provided on the left side.
-Dataset
+
+A common filter section is available on the left side.
+
+### Dataset
+
 The user can select one of the available datasets:
+
 - IPC Crimes
 - Auto Theft
 - Property Theft
 - Murder
 - Crimes Against Women
-State
-The state filter allows analysis for a specific state.
-Year Range
-The year range filter allows the user to select the required period.
+
+### State
+
+The state filter allows the user to analyze the selected dataset for a specific state.
+
+### Year Range
+
+The year range filter allows the user to select the required time period.
+
 The selected filters are applied to the displayed data and charts.
-25. Dashboard Analysis
-IPC Crime Analysis
-The dashboard displays the aggregated IPC crime statistics by state and year.
-This helps identify changes in overall IPC crime levels over time.
-Auto Theft Analysis
+
+---
+
+# 25. Dashboard Analysis
+
+## IPC Crime Analysis
+
+The dashboard displays aggregated IPC crime statistics by state and year.
+
+This can be used to examine changes in overall IPC crime levels across different years.
+
+## Auto Theft Analysis
+
 The dashboard compares:
-Vehicles Stolen
-Vehicles Recovered
 
-This provides a simple view of vehicle theft and recovery trends.
-Property Theft Analysis
-The dashboard displays property theft and recovery information.
-The main metric is the recovery rate:
+- Vehicles Stolen
+- Vehicles Recovered
+
+This provides a view of vehicle theft and recovery trends.
+
+## Property Theft Analysis
+
+The dashboard displays:
+
+- Property cases stolen
+- Property cases recovered
+- Value of property stolen
+- Value of property recovered
+- Recovery rate
+
+The recovery rate is calculated as:
+
+```text
 Recovery Rate =
-Value Recovered / Value Stolen × 100
+(Value Recovered / Value Stolen) × 100
+```
 
-Murder Victim Analysis
-The dashboard presents murder victim statistics with a focus on:
+## Murder Victim Analysis
+
+The dashboard presents murder victim statistics including:
+
 - Male victims
 - Female victims
 - Total victims
+
 The results can be filtered by state and year.
-Crimes Against Women
+
+## Crimes Against Women
+
 The dashboard presents selected case-status statistics including:
+
 - Cases Reported
 - Cases Chargesheeted
 - Cases Convicted
 - Cases Pending Trial
-These can be explored using the state and year filters.
-26. Data Processing Logic
+
+These values can be explored using the state and year filters.
+
+---
+
+# 26. Data Processing Logic
+
 Each dataset has a dedicated Mapper and Reducer.
-Dataset	Mapper	Reducer	Main Aggregation
-IPC Crimes	ipc_mapper.py	ipc_reducer.py	State + Year → Total IPC Crimes
-Property Theft	property_mapper.py	property_reducer.py	State + Year → Stolen/Recovered
-Auto Theft	auto_mapper.py	auto_reducer.py	State + Year → Stolen/Recovered
-Murder	murder_mapper.py	murder_reducer.py	State + Year → Male/Female/Total
-Crimes Against Women	women_mapper.py	women_reducer.py	State + Year → Reported/Chargesheeted/Convicted/Pending
 
+| Dataset | Mapper | Reducer | Main Aggregation |
+|---|---|---|---|
+| IPC Crimes | `ipc_mapper.py` | `ipc_reducer.py` | State + Year → Total IPC Crimes |
+| Property Theft | `property_mapper.py` | `property_reducer.py` | State + Year → Stolen / Recovered |
+| Auto Theft | `auto_mapper.py` | `auto_reducer.py` | State + Year → Stolen / Recovered |
+| Murder | `murder_mapper.py` | `murder_reducer.py` | State + Year → Male / Female / Total |
+| Crimes Against Women | `women_mapper.py` | `women_reducer.py` | State + Year → Reported / Chargesheeted / Convicted / Pending |
 
-This separation keeps the processing logic for each dataset independent.
-27. Example MapReduce Flow
-For a dataset containing:
-State       Year       Value
---------------------------------
-Telangana   2010       100
-Telangana   2010       250
-Telangana   2010       150
-Andhra      2010       200
+Keeping a separate Mapper and Reducer for each dataset allows the processing logic to match the structure and fields of that particular dataset.
 
-The Mapper produces:
-Telangana,2010    100
-Telangana,2010    250
-Telangana,2010    150
-Andhra,2010       200
+---
 
-Hadoop performs the shuffle and sort:
-Andhra,2010      -> [200]
-Telangana,2010   -> [100,250,150]
+# 27. HDFS and MapReduce Commands Used
 
-The Reducer produces:
-Andhra,2010      -> 200
-Telangana,2010   -> 500
+Some of the main Hadoop commands used in the project are listed below.
 
-This aggregated output is then stored in HDFS.
-28. HDFS and MapReduce Commands Used
-Some of the important Hadoop commands used in the project are:
-Check Hadoop version
+### Check Hadoop version
+
+```bash
 hadoop version
+```
 
-Start HDFS
+### Start HDFS
+
+```bash
 start-dfs.sh
+```
 
-Start YARN
+### Start YARN
+
+```bash
 start-yarn.sh
+```
 
-Check Hadoop processes
+### Check Hadoop processes
+
+```bash
 jps
+```
 
-List HDFS files
+### List HDFS files
+
+```bash
 hdfs dfs -ls /user/greeshma/crime_project/input
+```
 
-Create an HDFS directory
+### Create an HDFS directory
+
+```bash
 hdfs dfs -mkdir -p /user/greeshma/crime_project/input
+```
 
-Upload a file to HDFS
+### Upload a file to HDFS
+
+```bash
 hdfs dfs -put <local-file> <hdfs-directory>
+```
 
-Read an HDFS file
+### Read an HDFS file
+
+```bash
 hdfs dfs -cat <hdfs-file>
+```
 
-Remove an HDFS directory
+### Remove an HDFS directory
+
+```bash
 hdfs dfs -rm -r <hdfs-directory>
+```
 
-Copy a file from HDFS
+### Copy a file from HDFS
+
+```bash
 hdfs dfs -get <hdfs-file> <local-file>
+```
 
-29. Git and GitHub
-The project is maintained using Git.
-Initialize the repository:
-git init -b main
+---
 
-Add the GitHub repository as remote:
-git remote add origin <repository-url>
+# 28. Complete Execution Order
 
-Check the remote:
-git remote -v
+For a fresh setup, the project can be executed in the following order.
 
-Check the project status:
-git status
+### Step 1 — Verify Java
 
-Add project files:
-git add .
-
-Create a commit:
-git commit -m "Initial crime analysis project"
-
-Push the project:
-git push -u origin main
-
-The Python virtual environment is excluded from the repository using:
-.venv/
-__pycache__/
-*.pyc
-
-30. Complete Execution Order
-For a fresh setup, the overall execution sequence is:
-Step 1 — Install Java
+```bash
 java -version
 javac -version
+```
 
-Step 2 — Install and configure Hadoop
+### Step 2 — Configure Hadoop
+
 Configure:
+
+```text
 core-site.xml
 hdfs-site.xml
 mapred-site.xml
 yarn-site.xml
+```
 
-Step 3 — Start Hadoop
+### Step 3 — Start Hadoop
+
+```bash
 start-dfs.sh
 start-yarn.sh
+```
 
-Step 4 — Verify Hadoop
+### Step 4 — Verify Hadoop
+
+```bash
 jps
+```
 
-Step 5 — Create HDFS directories
+### Step 5 — Create HDFS directories
+
+```bash
 hdfs dfs -mkdir -p /user/greeshma/crime_project/input
 hdfs dfs -mkdir -p /user/greeshma/crime_project/output
+```
 
-Step 6 — Upload datasets
-hdfs dfs -put data/<dataset>.csv \
+### Step 6 — Upload datasets
+
+Upload the five CSV files to:
+
+```text
 /user/greeshma/crime_project/input/
+```
 
-Step 7 — Run MapReduce jobs
-Run the five Mapper/Reducer pairs.
-Step 8 — Retrieve the results
-hdfs dfs -get <hdfs-output> output/
+### Step 7 — Run the five MapReduce jobs
 
-Step 9 — Generate visualizations
+Run:
+
+1. IPC Crime MapReduce
+2. Property Theft MapReduce
+3. Auto Theft MapReduce
+4. Murder MapReduce
+5. Crimes Against Women MapReduce
+
+### Step 8 — Retrieve the results
+
+Copy the generated HDFS outputs to:
+
+```text
+output/
+```
+
+### Step 9 — Generate static visualizations
+
+```bash
 python3 scripts/visualize.py
+```
 
-Step 10 — Start the dashboard
+### Step 10 — Start the interactive dashboard
+
+```bash
 streamlit run scripts/dashboard.py
+```
 
-31. Results
-The MapReduce stage produces five processed datasets:
+---
+
+# 29. Results
+
+The MapReduce processing stage produces five processed datasets:
+
+```text
 ipc_state_year.csv
 property_analysis.csv
 auto_theft_analysis.csv
 murder_analysis.csv
 women_analysis.csv
+```
 
-These processed files are used to generate the visualizations and interactive dashboard.
-The final dashboard allows users to explore the results using:
+These files are used to generate the static visualizations and power the interactive dashboard.
+
+The final dashboard allows users to explore the processed results using:
+
 - Dataset selection
 - State selection
 - Year range selection
-This provides a more flexible way of exploring the data than viewing static graphs alone.
-32. Limitations
+
+The interactive dashboard provides a more flexible way to explore the processed data compared with viewing only static graphs.
+
+---
+
+# 30. Limitations
+
 This project is designed as an academic Big Data implementation and runs on a single local machine.
-Therefore:
-- HDFS replication is configured to 1.
-- The Hadoop cluster is a pseudo-distributed local setup.
-- The project uses five selected datasets rather than the complete collection of crime datasets.
-- MapReduce jobs focus on aggregation rather than predictive modeling.
-- The dashboard operates on the processed MapReduce output rather than querying HDFS directly.
-- The project does not include a production deployment.
-The main purpose is to demonstrate the concepts of HDFS, MapReduce, data aggregation, and interactive visualization.
-33. Future Improvements
-Possible extensions include:
-- Processing additional NCRB datasets.
-- Running Hadoop on a multi-node cluster.
+
+The main limitations are:
+
+- Hadoop runs in pseudo-distributed mode on a single machine.
+- HDFS replication is configured to `1`.
+- Only five selected crime datasets are processed.
+- The MapReduce jobs focus mainly on aggregation rather than predictive modeling.
+- The dashboard works with the processed MapReduce output files rather than querying HDFS directly.
+- The project is intended for academic demonstration rather than production deployment.
+
+The main focus of the project is to demonstrate HDFS storage, MapReduce processing, data aggregation, and interactive visualization.
+
+---
+
+# 31. Future Improvements
+
+Possible extensions to the project include:
+
+- Processing additional crime datasets.
+- Adding more crime categories and analytical metrics.
+- Adding district-level analysis to the dashboard.
+- Running the Hadoop environment on multiple nodes.
 - Increasing HDFS replication for fault tolerance.
-- Adding more MapReduce analytics.
-- Adding crime-category-level analysis.
-- Adding district-level interactive analysis.
+- Adding more MapReduce jobs for advanced analysis.
 - Integrating a database or data warehouse.
 - Adding real-time crime data processing.
 - Adding predictive analytics and forecasting.
-- Deploying the dashboard on a cloud platform.
-34. Conclusion
+- Deploying the dashboard to a cloud platform.
+
+---
+
+# 32. Git and GitHub
+
+Git is used for version control and GitHub is used to host the project repository.
+
+Initialize the repository:
+
+```bash
+git init -b main
+```
+
+Add the GitHub repository as the remote:
+
+```bash
+git remote add origin <repository-url>
+```
+
+Check the remote:
+
+```bash
+git remote -v
+```
+
+Check the project status:
+
+```bash
+git status
+```
+
+Add project files:
+
+```bash
+git add .
+```
+
+Create a commit:
+
+```bash
+git commit -m "Initial crime analysis project"
+```
+
+Push the project:
+
+```bash
+git push -u origin main
+```
+
+The Python virtual environment and Python cache files are excluded using `.gitignore`:
+
+```text
+.venv/
+__pycache__/
+*.pyc
+```
+
+---
+
+# 33. Conclusion
+
 This project demonstrates an end-to-end Big Data workflow for crime data analysis.
-The project starts with raw crime datasets and stores them in HDFS. Hadoop MapReduce is then used to process and aggregate the data based on state and year. The processed results are retrieved as CSV files and used to generate visualizations and an interactive Streamlit dashboard.
+
+The process begins with raw crime datasets, which are uploaded to Hadoop HDFS. Hadoop MapReduce is then used to process and aggregate the datasets based on state and year. The processed results are retrieved as CSV files and used for visualization and interactive analysis.
+
 The project provides practical experience with:
+
 - Hadoop HDFS
 - Hadoop MapReduce
 - Hadoop Streaming
-- Python-based Mapper and Reducer programs
+- Python Mapper and Reducer programs
 - Data aggregation
 - Pandas
 - Matplotlib
 - Plotly
 - Streamlit
 - Git and GitHub
-The overall pipeline is:
+
+The complete pipeline can be summarized as:
+
+```text
 Raw Crime Data
-      ↓
-     HDFS
-      ↓
+      |
+      v
+    HDFS
+      |
+      v
 Hadoop MapReduce
-      ↓
+      |
+      v
 Processed Results
-      ↓
+      |
+      v
 Python Analysis
-      ↓
+      |
+      v
+Interactive Dashboard
+```
+
+---
+
+## Repository
+
+GitHub repository:
+
+**Crime Analysis using Hadoop MapReduce**
+
+https://github.com/GreeshmaReddy427/Crime-Analysis-BDA-CBP
